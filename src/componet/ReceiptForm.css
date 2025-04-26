@@ -1,0 +1,123 @@
+
+
+body {
+    font-family: 'Noto Sans Gujarati', serif;
+  }
+  .receipt {
+    border: 2px solid #000;
+    padding: 20px 30px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-top: 20px;
+  }
+  .receipt h2 {
+    text-align: center;
+    color: #b30000;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+    
+.receipt-container {
+    font-family: 'Noto Sans Gujarati', sans-serif;
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  form {
+    margin-bottom: 20px;
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  form label {
+    display: block;
+    margin: 10px 0 4px;
+  }
+  
+  form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 16px;
+  }
+  
+  th, td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+  }
+  
+  .signature {
+    text-align: right;
+    width: 200px;
+  }
+  
+  .received-by {
+    font-weight: bold;
+  }
+  
+  
+  .actions {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .donation-row {
+    background: #fff;
+    padding:0%;
+    margin:0%;
+    border-radius: 10px;
+    max-width:900px;
+    direction:ltr;
+    flex-wrap: wrap; /* Responsive માટે ફરજિયાત */
+  }
+  
+  .donation-label {
+    justify-content: flex-start;
+    margin: auto;
+    padding:0%;
+    flex: 1 1 150px;
+  }
+  
+  .amount-input,
+  .note-input {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 120px;
+  }
+  
+  /* Mobile styles */
+  @media (max-width: 600px) {
+    .donation-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .donation-label,
+    .amount-input,
+    .note-input {
+      width: 100%;
+    }
+  }
+  

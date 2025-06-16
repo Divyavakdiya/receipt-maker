@@ -4,6 +4,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "./ReceiptForm.css";
 
+
 const ReceiptForm = () => { 
 
   const receiptRef = useRef();
@@ -24,6 +25,30 @@ const ReceiptForm = () => {
     { detail: "રસોઇ", amount: "", note: "", selected: false },
     { detail: "બાંધકામ/ભૂમિદાન", amount: "", note: "", selected: false },
   ]);
+  
+const isFormValid = () => {
+  if (
+    !formData.name.trim() ||
+    !formData.date ||
+    !formData.village.trim() ||
+    !formData.receivedBy.trim()
+  ) {
+    return false; // required fields empty
+  }
+
+  // At least one donation selected
+  const selectedDonations = donations.filter((d) => d.selected);
+  if (selectedDonations.length === 0) return false;
+
+  // All selected donations must have a positive amount
+  for (let donation of selectedDonations) {
+    if (!donation.amount || Number(donation.amount) <= 0) {
+      return false;
+    }
+  }
+
+  return true; // all good
+};
 
   const handleCheckboxChange = (index) => {
     const updated = [...donations];
@@ -56,7 +81,7 @@ const ReceiptForm = () => {
     // Step 1: Auto generate receipt number
     const current = parseInt(localStorage.getItem("receiptCounter") || "1", 10);
     const newReceiptNo = `RN-${String(current).padStart(4, "0")}`;
-    
+
   
     const total = donations
       .filter((d) => d.selected)
@@ -71,6 +96,7 @@ const ReceiptForm = () => {
       receiptNo: newReceiptNo,
       amount: total,
       amountWords: `Rs.${convertToWords(total)} Only.`,
+
     };
     setFormData(updatedFormData);
   
@@ -79,16 +105,7 @@ const ReceiptForm = () => {
   
     console.log("Receipt generated and sent to Google Sheet ✅");
     
-    // setFormData({
-    //   name: "",
-    //   date: "",
-    //   receiptNo: "",
-    //   village: "",
-    //   amount: "",
-    //   amountWords: "",
-    //   receivedBy: "",
-    // });
-    // setDonations(donations.map(d => ({ ...d, amount: "", note: "", selected: false })));
+    
     
   };
   
@@ -104,6 +121,7 @@ const ReceiptForm = () => {
   formDataToSend.append("entry.672223610", data.amount);
   formDataToSend.append("entry.1448350958", data.amountWords);
   formDataToSend.append("entry.1794073414", data.receivedBy);
+  
 
   const selectedDonations = donations
     .filter((d) => d.selected)
@@ -125,25 +143,39 @@ const ReceiptForm = () => {
 
   const downloadPDF = () => {
     const input = receiptRef.current;
+   if (!input) {
+    alert("Receipt is not available to generate PDF.");
+    return;
+  }
 
-    html2canvas(input).then((canvas) => {
-      const formImgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+    const formImgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
 
+      
       const background = new Image();
-      background.src = process.env.PUBLIC_URL + "/Swaminarayan_mandir.jpg"; // Fixed path
+    background.src = process.env.PUBLIC_URL + "/Swaminarayan_mandir.jpg";
 
-      background.onload = () => {
-        // Draw background image (full A4 page size)
-        pdf.addImage(background, "JPEG", 0, 0, 210, 297);
+    background.onload = () => {
+      pdf.addImage(background, "JPEG", 0, 0, 210, 297);
 
-        // Draw the form content (screenshot) on top
-        pdf.addImage(formImgData, "PNG", 5, 60, 200, 170);
+    const pdfWidth = 200;
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-        pdf.save("receipt.pdf");
-      };
-    });
-  };
+      pdf.addImage(formImgData, "PNG", 5, 60, pdfWidth, pdfHeight);
+
+      pdf.save("receipt.pdf");
+    };
+      background.onerror = () => {
+      // If background image fails, just add receipt content
+      pdf.addImage(formImgData, "PNG", 5, 60, 200, 170);
+      pdf.save("receipt.pdf");
+    };
+  });
+};
+  
+
+
 
   const convertToWords = (num) => {
     const a = [
@@ -220,32 +252,35 @@ const ReceiptForm = () => {
     .reduce((total, item) => total + Number(item.amount || 0), 0);
 
   const printReceipt = () => {
-    const printContents = receiptRef.current.innerHTML;
-    const printWindow = window.open("", "", "width=800,height=600");
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Receipt</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid black; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; }
-          </style>
-        </head>
-        <body>${printContents}</body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-  };
+  const printContents = receiptRef.current.innerHTML;
+  const printWindow = window.open("", "", "width=800,height=600");
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Receipt</title>
+        <style>
+          body { font-family: Verdana, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid black; padding: 8px; text-align: left; }
+          th { background-color: #f2f2f2; }
+        </style>
+      </head>
+      <body>${printContents}</body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  printWindow.close();
+};
+
 
     
 
   return (
-    <div className="receipt-container">
+  
+
+    <div  id="receipt" className="receipt-container">
       <form onSubmit={handleSubmit}>
         <label>Receipt_No:</label>
         <input type="text" id="receiptNo" value={formData.receiptNo} readOnly />
@@ -291,7 +326,10 @@ const ReceiptForm = () => {
         <label>Received By:</label>
         <input type="text" id="receivedBy" onChange={handleChange} />
 
-        <button type="submit" id="handleSubmit">Generate</button>
+        <button type="submit" id="handleSubmit"  disabled={!isFormValid()}>
+  Generate
+</button>
+
       </form>
 
       <div className="receipt" ref={receiptRef}>

@@ -3,10 +3,11 @@ import React from 'react';
 
 function App() {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Welcome to My Receipt Maker</h1>
-      <p>This is your custom React app!</p>
-      {/* You can add your receipt form or components here */}
+    <div className="App">
+      <h1 style={{ textAlign: 'center', margin: '20px 0' }}>
+       Shri Swaminarayan Mandir Kosad
+      </h1>
+      <ReceiptForm />
     </div>
   );
 }

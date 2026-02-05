@@ -1,6 +1,6 @@
 // src/App.js
 import React from 'react';
-import ReceiptForm from "./ReceiptForm";
+import ReceiptForm from './componet/ReceiptForm';
 
 function App() {
   return (

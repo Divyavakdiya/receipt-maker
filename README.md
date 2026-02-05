@@ -3,7 +3,7 @@
 A React-based web application to generate donation receipts.
 
 ## 🚀 Live Demo
-https://receipt-maker.vercel.app
+(https://receipt-maker-six.vercel.app/)
 
 ## 🛠️ Tech Stack
 - React.js
